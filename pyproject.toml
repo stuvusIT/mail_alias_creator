@@ -5,6 +5,9 @@ description = "Set of pyhton scripts to create our mail alias tables from alias 
 authors = ["Tim Neumann <neumantm@fius.informatik.uni-stuttgart.de>"]
 license = "MIT"
 
+[tool.poetry.scripts]
+mail_alias_creator = 'mail_alias_creator.main:main'
+
 [tool.poetry.dependencies]
 python = "^3.8"
 ldap3 = "^2.8.1"

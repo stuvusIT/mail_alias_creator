@@ -142,7 +142,7 @@ class LDAPConnector():
                         if type(value) is list:
                             for member in value:
                                 results.append(member)
-                        elif value is not None: # value is none if no one is in group
+                        elif value is not None: # value is None if group is empty
                             results.append(value)
         except LDAPSocketOpenError as error:
             logger.warn("Unable to connect to LDAP Server.")

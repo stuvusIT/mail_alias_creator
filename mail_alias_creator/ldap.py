@@ -138,8 +138,12 @@ class LDAPConnector():
                                attributes=[self.group_membership_field]):
                     logger.debug("Found these entries: {}".format(str(conn.entries)))
                     for entry in conn.entries:
-                        for member in entry[self.group_membership_field].value:
-                            results.append(member)
+                        value = entry[self.group_membership_field].value
+                        if type(value) is list:
+                            for member in value:
+                                results.append(member)
+                        elif value is not None: # value is None if group is empty
+                            results.append(value)
         except LDAPSocketOpenError as error:
             logger.warn("Unable to connect to LDAP Server.")
             raise ConnectionError("Unable to connect to LDAP Server.") from error

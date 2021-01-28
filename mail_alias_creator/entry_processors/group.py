@@ -5,6 +5,8 @@ import logging
 
 from .base import EntryProcessor
 
+from .. import CONFIG
+
 logger: logging.Logger = logging.getLogger("ep.group")
 
 
@@ -16,6 +18,8 @@ class GroupEP(EntryProcessor):
         super().__init__()
         if "group" not in data:
             logger.error("Group entry has no group: {}".format(str(data)))
+            if CONFIG["main"].getboolean("strict"):
+                exit(1)
         self.group: str = data["group"]
         logger.debug("Group EP initialized with {}".format(self.group))
 
@@ -30,6 +34,8 @@ class GroupEP(EntryProcessor):
         for i, mail in enumerate(mails):
             if mail is None:
                 logger.error("User {} does not exist or has no primary mail.".format(users[i]))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
             else:
                 self.add_sender(users[i])
                 self.add_recipient(mail)

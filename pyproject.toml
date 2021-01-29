@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mail_alias_creator"
-version = "0.1.0"
+version = "1.0.0"
 description = "Set of pyhton scripts to create our mail alias tables from alias definitions"
 authors = ["Tim Neumann <neumantm@fius.informatik.uni-stuttgart.de>"]
 license = "MIT"

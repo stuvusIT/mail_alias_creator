@@ -46,6 +46,9 @@ def run(config_file: str, alias_files: List[str]):
     LDAP = LDAPConnector()
     processor = Processor()
     processor.load_files(alias_files)
+    if CONFIG["main"].getboolean("check_syntax_only"):
+        print("Done with syntax check. Not doing anything else.")
+        return
     processor.process()
     with open("sender_aliases.json", 'w') as f:
         dump(processor.sender_aliases, f)

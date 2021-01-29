@@ -20,7 +20,9 @@ class UserEP(EntryProcessor):
             logger.error("User entry has no user: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):
                 exit(1)
-        self.user: str = data["user"]
+            self.user: str = "<unknown>"
+        else:
+            self.user: str = data["user"]
         logger.debug("User EP initialized with {}".format(self.user))
 
     def process(self, alias_address_provider):

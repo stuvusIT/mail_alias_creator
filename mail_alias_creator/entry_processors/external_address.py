@@ -20,7 +20,9 @@ class ExternalAddressEP(EntryProcessor):
             logger.error("External address entry has no address: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):
                 exit(1)
-        self.address: str = data["address"]
+            self.address: str = "<unknown>"
+        else:
+            self.address: str = data["address"]
         logger.debug("External Address EP initialized with {}".format(self.address))
 
     def process(self, alias_address_provider):

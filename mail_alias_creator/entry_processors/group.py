@@ -20,7 +20,9 @@ class GroupEP(EntryProcessor):
             logger.error("Group entry has no group: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):
                 exit(1)
-        self.group: str = data["group"]
+            self.group: str = "<unknown>"
+        else:
+            self.group: str = data["group"]
         logger.debug("Group EP initialized with {}".format(self.group))
 
     def process(self, alias_address_provider):

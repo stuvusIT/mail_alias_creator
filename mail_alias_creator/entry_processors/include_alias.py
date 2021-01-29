@@ -21,7 +21,9 @@ class IncludeAliasEP(EntryProcessor):
             logger.error("Include alias entry has no alias field: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):
                 exit(1)
-        self.alias: str = data["alias"]
+            self.alias: str = "<unknown>"
+        else:
+            self.alias: str = data["alias"]
         logger.debug("Include alias EP initialized with {}".format(self.alias))
 
     def process(self, alias_address_provider: AliasAddressProvider):

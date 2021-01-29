@@ -5,6 +5,8 @@ import logging
 
 from .base import EntryProcessor
 
+from .. import CONFIG
+
 logger: logging.Logger = logging.getLogger("ep.eaddr")
 
 
@@ -16,6 +18,8 @@ class ExternalAddressEP(EntryProcessor):
         super().__init__()
         if "address" not in data:
             logger.error("External address entry has no address: {}".format(str(data)))
+            if CONFIG["main"].getboolean("strict"):
+                exit(1)
         self.address: str = data["address"]
         logger.debug("External Address EP initialized with {}".format(self.address))
 

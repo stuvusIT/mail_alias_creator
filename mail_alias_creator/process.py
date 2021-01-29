@@ -13,6 +13,8 @@ from .entry_processors.user import UserEP
 from .entry_processors.include_alias import IncludeAliasEP
 from .entry_processors.group import GroupEP
 
+from . import CONFIG
+
 logger: logging.Logger = logging.getLogger("process")
 
 
@@ -41,6 +43,8 @@ class AliasDefinition(AliasAddress):
                 kind = entry["kind"]
             else:
                 logger.error("Entry of alias {} has no kind: {}".format(self.mail, str(entry)))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
                 return
 
             if kind == "external_address":
@@ -53,6 +57,8 @@ class AliasDefinition(AliasAddress):
                 self.entries.append(GroupEP(entry))
             else:
                 logger.warn("Unknown entry kind in {}: {}".format(self.mail, kind))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
 
     def process(self, alias_address_provider: AliasAddressProvider):
         """Process."""
@@ -102,6 +108,9 @@ class Processor(AliasAddressProvider):
             logger.debug("Found alias {}".format(mail))
             if mail in self.alias_definitions:
                 logger.error("Found duplicate alias entry for: {}".format(mail))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
+
             self.alias_definitions[mail] = AliasDefinition(mail, data)
 
     def load_files(self, alias_files: List[str]):
@@ -113,11 +122,13 @@ class Processor(AliasAddressProvider):
                     for name in files:
                         logger.debug("Found {} in dir {}".format(name, root))
                         self.load_file(path.join(root, name))
-            elif path.exists():
+            elif path.exists(alias_file):
                 logger.debug("{} is a file".format(alias_file))
                 self.load_file(alias_file)
             else:
                 logger.warn("The given file {} does not exist".format(alias_file))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
 
     def process(self):
         """Process all loaded aliases and generate the sender and receiver aliases."""

@@ -28,11 +28,11 @@ group_id_field = cn
 group_membership_field = memberUid
 ```
 
-The `logging_conf` is file path relative to the main configuration file (or absolute). At this path should be a python `logging.conf` compatible logging configuration. This option may be omited.
+The `logging_conf` is file path relative to the main configuration file (or absolute). At this path should be a python `logging.conf` compatible logging configuration. This option may be omitted.
 
-The `strict` flag enables strict checking of the inputs. In this case the program exits with a non-zero exit code when a possible problem with the given files is detected. This option may be omited, which set's it to false.
+The `strict` flag enables strict checking of the inputs. In this case the program exits with a non-zero exit code when a possible problem with the given files is detected. This option may be omitted, which set's it to false.
 
-The `check_syntax_only` flag can be used to abort the program after loading the alias files. This option may be omited, which set's it to false.
+The `check_syntax_only` flag can be used to abort the program after loading the alias files. This option may be omitted, which set's it to false.
 
 In the LDAP section some more variables then shown are supported.
 For a complete list and some explanations see [ldap.py](mail_alias_creator/ldap.py).

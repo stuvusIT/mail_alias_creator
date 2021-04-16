@@ -15,7 +15,7 @@ class UserEP(EntryProcessor):
 
     def __init__(self, data: Dict[str, Any]):
         """Init."""
-        super().__init__()
+        super().__init__(data)
         if "user" not in data:
             logger.error("User entry has no user: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):

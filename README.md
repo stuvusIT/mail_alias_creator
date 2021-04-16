@@ -72,8 +72,6 @@ Format:
 ```
 
 ##### Optional attribues
-NOT IMPLEMENTED
-
 The following optional attributes may be added.
 | name | default | description |
 | ---  | --- | --- |
@@ -92,8 +90,6 @@ Format:
 ```
 
 ##### Optional attribues
-NOT IMPLEMENTED
-
 The following optional attributes may be added.
 | name | default | description |
 | ---  | --- | --- |
@@ -116,8 +112,6 @@ Format:
 ```
 
 ##### Optional attribues
-NOT IMPLEMENTED
-
 The following optional attributes may be added.
 | name | default | description |
 | ---  | --- | --- |
@@ -135,3 +129,10 @@ Format:
 - kind: external_address
   address: <email address>
 ```
+
+##### Optional attribues
+Even though they do not make much sense, the following optional attributes may be added.
+| name | default | description |
+| ---  | --- | --- |
+| `forbidSend` | `False` | Forbid the members of the given alias to send via this alias.
+| `forbidReceive` | `False` | Don't foward incoming mails to the members of the given alias.

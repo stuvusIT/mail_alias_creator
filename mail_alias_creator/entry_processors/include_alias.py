@@ -16,7 +16,7 @@ class IncludeAliasEP(EntryProcessor):
 
     def __init__(self, data: Dict[str, Any]):
         """Init."""
-        super().__init__()
+        super().__init__(data)
         if "alias" not in data:
             logger.error("Include alias entry has no alias field: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):

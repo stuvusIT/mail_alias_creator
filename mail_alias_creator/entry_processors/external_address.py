@@ -15,7 +15,7 @@ class ExternalAddressEP(EntryProcessor):
 
     def __init__(self, data: Dict[str, Any]):
         """Init."""
-        super().__init__()
+        super().__init__(data)
         if "address" not in data:
             logger.error("External address entry has no address: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):

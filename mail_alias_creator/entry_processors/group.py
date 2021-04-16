@@ -15,7 +15,7 @@ class GroupEP(EntryProcessor):
 
     def __init__(self, data: Dict[str, Any]):
         """Init."""
-        super().__init__()
+        super().__init__(data)
         if "group" not in data:
             logger.error("Group entry has no group: {}".format(str(data)))
             if CONFIG["main"].getboolean("strict"):

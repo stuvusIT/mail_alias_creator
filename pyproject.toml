@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mail_alias_creator"
-version = "1.1.0"
+version = "1.1.1"
 description = "Set of python scripts to create our mail alias tables from alias definitions"
 repository = "https://github.com/stuvusIT/mail_alias_creator"
 readme = "README.md"
@@ -13,7 +13,7 @@ mail_alias_creator = 'mail_alias_creator.main:main'
 [tool.poetry.dependencies]
 python = "^3.6"
 ldap3 = "^2.7"
-pyyaml = "^5.2"
+pyyaml = "^6.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

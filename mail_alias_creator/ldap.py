@@ -50,6 +50,8 @@ class LDAPConnector():
         self.group_id_field: str = ldap_config.get("group_id_field")
         # The field of a group, which contains the username
         self.group_membership_field: str = ldap_config.get("group_membership_field")
+        # Whether the groups contain full DNs for each user instead of uids
+        self.groups_contain_dns: bool = ldap_config.getboolean("groups_contain_dns", fallback=False)
 
         self.server = Server(self.ldap_uri, port=self.port, use_ssl=self.ssl, connect_timeout=5)
 
@@ -117,6 +119,42 @@ class LDAPConnector():
         logger.debug("Result: {}".format(result))
         return result
 
+    def _get_uids_for_dns(self, dns: List[str]) -> List[str]:
+        """Get the uid for each of the given DNs"""
+        logger.info("Translating DNs to UIDs")
+        logger.debug("DNS: {}".format(dns))
+
+        auto_bind = AUTO_BIND_NO_TLS
+        if self.start_tls:
+            auto_bind = AUTO_BIND_TLS_BEFORE_BIND
+        results: List[str] = []
+        try:
+            with Connection(self.server,
+                            user=self.bind_user,
+                            password=self.bind_user_password,
+                            auto_bind=auto_bind,
+                            read_only=True) as conn:
+                for dn in dns:
+                    if conn.search(dn, self.user_filter, attributes=[self.user_uid_field]):
+                        if len(conn.entries) != 1:
+                            logger.warn("Expected to get exactly one response for the dn {}, but got {}".format(dn, str(len(conn.entries))))
+                        uid = conn.entries[0][self.user_uid_field].value
+                        logger.debug("For the object {} the uid is {}".format(dn, uid))
+                        results.append(uid)
+                    else:
+                        logger.error("Could not determine uid for {}".format(dn))
+                        if CONFIG["main"].getboolean("strict"):
+                            exit(1)
+        except LDAPSocketOpenError as error:
+            logger.warn("Unable to connect to LDAP Server.")
+            raise ConnectionError("Unable to connect to LDAP Server.") from error
+        except LDAPBindError as error:
+            logger.warn("Unable to bind to LDAP Server.")
+            raise ConnectionError("Unable to bind to LDAP Server.") from error
+
+        logger.debug("Result(DNs to UIDs): {}".format(results))
+        return results
+
     def get_users_in_group(self, group: str) -> List[str]:
         """ Get a list of the users in the given group."""
         logger.info("Getting members of group  {}".format(group))
@@ -151,5 +189,8 @@ class LDAPConnector():
             logger.warn("Unable to bind to LDAP Server.")
             raise ConnectionError("Unable to bind to LDAP Server.") from error
 
-        logger.debug("Result: {}".format(results))
+        if(self.groups_contain_dns):
+            results = self._get_uids_for_dns(results)
+
+        logger.debug("Result(Members of Group): {}".format(results))
         return results

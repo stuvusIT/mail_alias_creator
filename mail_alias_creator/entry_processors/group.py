@@ -29,16 +29,14 @@ class GroupEP(EntryProcessor):
         """Process."""
         logger.debug("Processing group EP with {}".format(self.group))
         from ..main import LDAP
-        users = LDAP.get_users_in_group(self.group)
-        if users == []:
-            logger.warn("Group {} has no members.".format(self.group))
-        else:
-            mails = LDAP.get_user_primary_mails(users)
-            for i, mail in enumerate(mails):
-                if mail is None:
-                    logger.error("User {} does not exist or has no primary mail.".format(users[i]))
-                    if CONFIG["main"].getboolean("strict"):
-                        exit(1)
-                else:
-                    self.add_sender(users[i])
-                    self.add_recipient(mail)
+
+        tuples = LDAP.get_uids_and_primary_mails_for_group(self.group)
+
+        for uid, mail in tuples:
+            if mail is None:
+                logger.error("User {} does not exist or has no primary mail.".format(uid))
+                if CONFIG["main"].getboolean("strict"):
+                    exit(1)
+            else:
+                self.add_sender(uid)
+                self.add_recipient(mail)

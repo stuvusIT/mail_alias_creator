@@ -32,12 +32,13 @@ class GroupEP(EntryProcessor):
         users = LDAP.get_users_in_group(self.group)
         if users == []:
             logger.warn("Group {} has no members.".format(self.group))
-        mails = LDAP.get_user_primary_mails(users)
-        for i, mail in enumerate(mails):
-            if mail is None:
-                logger.error("User {} does not exist or has no primary mail.".format(users[i]))
-                if CONFIG["main"].getboolean("strict"):
-                    exit(1)
-            else:
-                self.add_sender(users[i])
-                self.add_recipient(mail)
+        else:
+            mails = LDAP.get_user_primary_mails(users)
+            for i, mail in enumerate(mails):
+                if mail is None:
+                    logger.error("User {} does not exist or has no primary mail.".format(users[i]))
+                    if CONFIG["main"].getboolean("strict"):
+                        exit(1)
+                else:
+                    self.add_sender(users[i])
+                    self.add_recipient(mail)

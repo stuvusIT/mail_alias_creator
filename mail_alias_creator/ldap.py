@@ -163,6 +163,7 @@ class LDAPConnector():
             users = self.get_users_in_group(group)
             if users == []:
                 logger.warn("Group {} has no members.".format(group))
+                return []
             return self.get_user_primary_mails(users)
 
         logger.info("Getting primary mails for users in group {}".format(group))

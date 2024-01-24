@@ -29,7 +29,7 @@ class UserEP(EntryProcessor):
         """Process."""
         logger.debug("Processing user EP with {}".format(self.user))
         from ..main import LDAP
-        mail = LDAP.get_user_primary_mails([self.user])[0]
+        mail = LDAP.get_user_primary_mails([self.user])[0][1]
         if mail is None:
             logger.error("User {} does not exist or has no primary mail.".format(self.user))
             if CONFIG["main"].getboolean("strict"):

@@ -17,7 +17,6 @@ from . import CONFIG
 
 logger: logging.Logger = logging.getLogger("process")
 
-
 class AliasDefinition(AliasAddress):
     """Representation of one alias definition."""
 
@@ -72,7 +71,7 @@ class AliasDefinition(AliasAddress):
                 if recipient not in self.recipients:
                     self.recipients.append(recipient)
 
-    def get(self, alias_address_provider: AliasAddressProvider) -> Tuple[List[str], List[str]]:
+    def get(self, alias_address_provider: AliasAddressProvider, for_final_result: bool = False) -> Tuple[List[str], List[str]]:
         """
         Get the senders and recipients represented by this alias definition.
 
@@ -82,7 +81,19 @@ class AliasDefinition(AliasAddress):
         if not self.has_been_processed:
             self.process(alias_address_provider)
             self.has_been_processed = True
-        return self.senders, self.recipients
+
+        senders = self.senders
+        recipients = self.recipients
+
+        if for_final_result:
+            dummy_sender_uid = CONFIG["main"].get("dummy_sender_uid", "")
+            if len(senders) == 0 and len(dummy_sender_uid) > 0:
+                senders = [dummy_sender_uid]
+            dummy_recipient_address = CONFIG["main"].get("dummy_recipient_address", "")
+            if len(recipients) == 0 and len(dummy_recipient_address) > 0:
+                recipients = [dummy_recipient_address]
+
+        return senders, recipients
 
 
 class Processor(AliasAddressProvider):
@@ -135,7 +146,7 @@ class Processor(AliasAddressProvider):
         logger.info("Start processing aliases.")
         for alias_definition in self.alias_definitions.values():
             logger.info("Proccessing {}".format(alias_definition.mail))
-            senders, recipients = alias_definition.get(self)
+            senders, recipients = alias_definition.get(self, True)
             for sender in senders:
                 self.sender_aliases.append({
                     "sender": sender,

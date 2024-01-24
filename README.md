@@ -15,6 +15,8 @@ A typical configuration file looks like this:
 logging_conf = logging.conf
 strict = false
 check_syntax_only = false
+dummy_sender_uid = mydummy
+dummy_recipient_address = mydummy@example.com
 
 [LDAP]
 uri = ldaps://myldap.com
@@ -34,7 +36,13 @@ The `strict` flag enables strict checking of the inputs. In this case the progra
 
 The `check_syntax_only` flag can be used to abort the program after loading the alias files. This option may be omitted, which set's it to false.
 
-In the LDAP section some more variables then shown are supported.
+The `dummy_sender_uid` and `dummy_recipient_address` fields are optional.
+It is also possible to set one and omit the other
+If set to a non-empty string the respective uid or address is used for all aliases that are defined but do not have an actual sender or recipient (this can be the case if the primary mail of a user can't be found, a group is empty, the `forbidSend` or `forbidReceive` flags are used or for the sender of an alias which only has entries of the `external_address` kind).
+This can be used to make sure the alias still appears in the generated lists giving the mail processing system the ability to
+react accordingly.
+
+In the LDAP section some more variables than shown are supported.
 For a complete list and some explanations see [ldap.py](mail_alias_creator/ldap.py).
 
 ## Alias defintion format

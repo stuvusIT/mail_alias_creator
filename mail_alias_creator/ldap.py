@@ -5,6 +5,7 @@ import logging
 
 from ldap3 import Connection, Server, AUTO_BIND_NO_TLS, AUTO_BIND_TLS_BEFORE_BIND, SUBTREE
 from ldap3.core.exceptions import LDAPSocketOpenError, LDAPBindError
+from ldap3.utils.conv import escape_filter_chars
 
 from ldap3.utils.log import set_library_log_detail_level, OFF, BASIC, EXTENDED
 
@@ -81,7 +82,7 @@ class LDAPConnector():
         logger.info("Getting primary mails for users {}".format(str(users)))
         filters = []
         for user in users:
-            filters.append("(" + self.user_uid_field + "=" + user + ")")
+            filters.append("(" + self.user_uid_field + "=" + escape_filter_chars(user) + ")")
         combined_filter = LDAPConnector.combine_filters(filters)
         combined_filter = LDAPConnector.combine_filters([combined_filter, self.user_filter], use_and=True)
         logger.debug("Combined Filter: {}".format(combined_filter))
@@ -123,7 +124,7 @@ class LDAPConnector():
     def get_users_in_group(self, group: str) -> List[str]:
         """ Get a list of the users in the given group."""
         logger.info("Getting members of group  {}".format(group))
-        filters = [self.group_filter, "(" + self.group_id_field + "=" + group + ")"]
+        filters = [self.group_filter, "(" + self.group_id_field + "=" + escape_filter_chars(group) + ")"]
         combined_filter = LDAPConnector.combine_filters(filters, use_and=True)
         logger.debug("Combined Filter: {}".format(combined_filter))
         auto_bind = AUTO_BIND_NO_TLS
@@ -168,7 +169,7 @@ class LDAPConnector():
 
         logger.info("Getting primary mails for users in group {}".format(group))
         logger.debug("First: Getting group DN")
-        filters = [self.group_filter, "(" + self.group_id_field + "=" + group + ")"]
+        filters = [self.group_filter, "(" + self.group_id_field + "=" + escape_filter_chars(group) + ")"]
         combined_filter = LDAPConnector.combine_filters(filters, use_and=True)
         logger.debug("Combined Filter: {}".format(combined_filter))
         auto_bind = AUTO_BIND_NO_TLS
@@ -189,7 +190,7 @@ class LDAPConnector():
                     logger.debug("Found this response: {}".format(str(entry)))
                     group_dn = entry["dn"]
                     logger.debug("Now searching members of this group")
-                    combined_filter = LDAPConnector.combine_filters(["(memberof={})".format(group_dn), self.user_filter], use_and=True)
+                    combined_filter = LDAPConnector.combine_filters(["(memberof={})".format(escape_filter_chars(group_dn)), self.user_filter], use_and=True)
                     logger.debug("Combined Filter: {}".format(combined_filter))
                     results: List[Tuple[str, Optional[str]]] = []
                     if conn.search(self.user_search_base,

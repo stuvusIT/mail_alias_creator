@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mail_alias_creator"
-version = "1.2.1"
+version = "1.2.2"
 description = "Set of python scripts to create our mail alias tables from alias definitions"
 repository = "https://github.com/stuvusIT/mail_alias_creator"
 readme = "README.md"
@@ -27,5 +27,5 @@ line-length = 120
 include = '\.pyi?$'
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
